@@ -20,11 +20,11 @@ public  abstract class  AbstractObjectDispatcher {
 				public void Startup()
 				{
 				
-					 retrieveObject();
+					exportToExcel();
 					
 				}
 				
-				public abstract  void retrieveObject();
+				public abstract  void exportToExcel();
 	
 	
 

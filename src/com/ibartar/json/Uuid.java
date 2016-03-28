@@ -46,6 +46,18 @@ public class Uuid {
 	@JsonProperty("distance")
 	private String  distance;
 	
+	@JsonProperty("rates")
+	private Rate  rates;
+	
+
+	public Rate getRates() {
+		return rates;
+	}
+
+	public void setRates(Rate rates) {
+		this.rates = rates;
+	}
+
 	@Override
 	public int hashCode() {
 		// TODO Auto-generated method stub
