@@ -29,9 +29,12 @@ public  abstract class  AbstractObjectDispatcher {
 				public void Startup() throws IOException
 				{
 				
-					retreieveDataByRegion();
+					addToRepository();
+					
+				//	retreieveDataByRegion();
 					
 				}
+				public abstract  void addToRepository() throws IOException;
 				
 				public abstract  void retreieveDataByRegion() throws IOException;
 	

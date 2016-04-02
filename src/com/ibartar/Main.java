@@ -28,11 +28,17 @@ public class Main {
 				+ "&guild={2}"
 				+ "&chanel=main"
 				+ "&s_id=87f06bbf-9cd6-40c5-b9ff-3306faea1d77&device_type=desktop";
+	    
+	    String URLTEMPLATE_GPS="http://ibartar.com/api/v1.1/page/search?"
+	    		+ "page={0}"
+	    		+ "&area={1},{2},{3},{4}"
+	    		+ "&chanel=menu&s_id=8a61a996-850d-4f13-a64e-a8aa9160b09c&device_type=desktop";
 		
 		
 		  ObjectDispatcher objDispatcher=new ObjectDispatcher(
 				   URLTEMPLATE_Region
 				  ,URLTEMPLATE_Guild
+				  ,URLTEMPLATE_GPS
 				  ,Body.class,1);
 		  objDispatcher.Startup();
 		 

@@ -37,6 +37,7 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 	
    private String urlTemplate_region="";
    private String urlTemplate_guild="";
+   private String urlTemplate_Gps="";
    private List<String> guildArr_error=new ArrayList<>();
    private List<Filter> guildArr_no=new ArrayList<>();
    private int totalRow=0;
@@ -46,14 +47,128 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 
    
    
-   public 	ObjectDispatcher(String urltemplate_region,String urltemplate_guild, Class<?> resultType,int page)
+   public 	ObjectDispatcher(String urltemplate_region,String urltemplate_guild,String urltemplate_gps,Class<?> resultType,int page)
    {
 	   super (resultType,page);
 	   this.urlTemplate_region=urltemplate_region;
 	   this.urlTemplate_guild=urltemplate_guild;
+	   this.urlTemplate_Gps=urltemplate_gps;
 	   this.data_repository=new TreeMap<String, Object[]>();
 	   data_repository.put(String.valueOf(rownum++),new Object[]{"title","address","description","tel","lat","lng","cat","s_logo","l_logo"});
   	
+   }
+   
+   public void addToRepository()
+   {
+	  // double lat_min=35.60000000;
+	  // double lat_max=35.89999999;
+	  // double lng_min=51.10000000;
+	   //double lng_max=51.69999999;
+	   
+	 float lat_min=35.5720f;
+     float lat_max=35.8324f;
+     
+     double lng_min=51.1047;
+	 double lng_max=51.6345;
+	 
+	 double lat_max_temp=35.8324;
+	   
+	   String lng,lat="";
+	 	   
+	   int count=0;
+	   int f=0;
+	   
+	 //  while(lng_max>=lng_min)
+	//   {
+		   
+		   while(lat_max_temp>=lat_min)
+		   {
+			
+			   count++;
+				
+			   lat=String.format("%.4f",lat_max_temp);
+			   lng=String.format("%.4f",lng_max);
+			   
+			   
+			   URLTEMPLATE= MessageFormat.format(this.urlTemplate_Gps,page,lat+"9999",lng+"9999",lat+"1111",lng+"1111");
+				  
+//			   String jsonResponse=callHttpService();
+// 		       try {
+//				responseBody=parseJsonResponse(jsonResponse,resultType);
+//		
+//				if (responseBody.getData().size()>0){
+//					
+//					System.out.println("found.");
+//					
+//	    			for (Object objData :responseBody.getData())
+//					   {
+//					    								    						    					
+//				 
+//						   data_repository.put(String.valueOf(rownum++),new Object[]{
+//							   
+//							   ((Uuid)objData).getTitle(),
+//							   ((Uuid)objData).getAddress(),
+//							   ((Uuid)objData).getDescription(),
+//							   ((Uuid)objData).getTel_1(),
+//							   ((Uuid)objData).getLat(),
+//							   ((Uuid)objData).getLng(),
+//						       ((Uuid)objData).getGuilds().get(0).getTitle(),
+//							   ((Uuid)objData).getLogo().getSmall(),
+//							   ((Uuid)objData).getLogo().getFullSize(),
+//							   				   			   
+//						   });
+//					   }
+//	    			
+//	    		    
+//	    			f=1;
+//					
+//				}
+// 	
+//				if (f==1)
+//				{
+//					
+//					break;
+//				}
+//				
+//						
+//				} catch (JsonParsingException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			   
+			   
+			  System.out.println(URLTEMPLATE);
+			   
+						   
+ 		      lat_max_temp=lat_max_temp-0.0001;
+			   
+//			   if (count==1000)
+//			   {
+//				   break;
+//			   }
+			   
+		   }
+		   
+		//   if (count==1000)
+	//	   {
+	//		   break;
+	//	   }
+		   
+		//   if (f==1)
+		//	{
+				
+		//		break;
+		//	}
+		   
+		  // lat_max_temp=lat_max;
+		   
+		  // lng_max=lng_max-0.0001;
+		   
+	 //  }
+	   
+	 //  System.out.println("finish.............");
+	   
+	   
    }
    
    public void exportToExcel (String fileName)
@@ -344,7 +459,7 @@ public void retreieveDataByRegion() throws IOException
 		        try {
 		            HttpGet httpget = new HttpGet(url);
 
-		            System.out.println("executing request " + httpget.getURI());
+		           System.out.println("executing request " + httpget.getURI());
 		           
 		            // Create a response handler
 		            ResponseHandler<String> responseHandler = new BasicResponseHandler();
