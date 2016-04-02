@@ -1,5 +1,7 @@
 package com.ibartar.utils;
 
+import java.io.IOException;
+
 import com.ibartar.json.Body;
 
 public  abstract class  AbstractObjectDispatcher {
@@ -10,21 +12,28 @@ public  abstract class  AbstractObjectDispatcher {
 	
 	protected int page;
 	
+	protected int  maxPage;
 	
-				public AbstractObjectDispatcher(String urlTemplate, Class<?> resultType,int page) {
-					this.URLTEMPLATE = urlTemplate;
+	protected String region="";
+	
+	protected Body<?> responseBody;
+	
+	protected String urlTemplate="";
+	
+	
+				public AbstractObjectDispatcher(Class<?> resultType,int page) {
 					this.resultType = resultType;
 					this.page=page;
 				} 
 				
-				public void Startup()
+				public void Startup() throws IOException
 				{
 				
-					exportToExcel();
+					retreieveDataByRegion();
 					
 				}
 				
-				public abstract  void exportToExcel();
+				public abstract  void retreieveDataByRegion() throws IOException;
 	
 	
 

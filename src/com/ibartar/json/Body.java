@@ -11,6 +11,28 @@ public class Body<T> {
 	@JsonProperty("data")
 	private List<T> data;
 
+	@JsonProperty("last_page")
+	private String last_page;
+	
+	@JsonProperty("filters")
+	private List<Filter> filters;
+
+	public String getLast_page() {
+		return last_page;
+	}
+
+	public void setLast_page(String last_page) {
+		this.last_page = last_page;
+	}
+
+	public List<Filter> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(List<Filter> filters) {
+		this.filters = filters;
+	}
+
 	public List<T> getData() {
 		return data;
 	}
