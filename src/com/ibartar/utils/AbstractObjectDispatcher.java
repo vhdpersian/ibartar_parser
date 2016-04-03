@@ -20,6 +20,11 @@ public  abstract class  AbstractObjectDispatcher {
 	
 	protected String urlTemplate="";
 	
+	public AbstractObjectDispatcher()
+	{
+		
+		
+	}
 	
 				public AbstractObjectDispatcher(Class<?> resultType,int page) {
 					this.resultType = resultType;
@@ -29,12 +34,12 @@ public  abstract class  AbstractObjectDispatcher {
 				public void Startup() throws IOException
 				{
 				
-					addToRepository();
+					retrieveByGPS();
 					
 				//	retreieveDataByRegion();
 					
 				}
-				public abstract  void addToRepository() throws IOException;
+				public abstract  void retrieveByGPS() throws IOException;
 				
 				public abstract  void retreieveDataByRegion() throws IOException;
 	

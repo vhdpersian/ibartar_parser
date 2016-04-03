@@ -35,11 +35,14 @@ public class Main {
 	    		+ "&chanel=menu&s_id=8a61a996-850d-4f13-a64e-a8aa9160b09c&device_type=desktop";
 		
 		
-		  ObjectDispatcher objDispatcher=new ObjectDispatcher(
-				   URLTEMPLATE_Region
-				  ,URLTEMPLATE_Guild
-				  ,URLTEMPLATE_GPS
-				  ,Body.class,1);
+		//  ObjectDispatcher objDispatcher=new ObjectDispatcher(
+				 //  URLTEMPLATE_Region
+				 // ,URLTEMPLATE_Guild
+				 // ,URLTEMPLATE_GPS
+				 // ,Body.class,1);
+	    
+	      ObjectDispatcher objDispatcher=new ObjectDispatcher(
+	    		  URLTEMPLATE_GPS,35.5720f,35.8324f,51.1047f,51.6345f);
 		  objDispatcher.Startup();
 		 
 		

@@ -3,13 +3,22 @@ package com.ibartar.utils;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +36,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.impl.piccolo.util.LongStack;
+
 import com.ibartar.json.Body;
 import com.ibartar.json.Filter;
+import com.ibartar.json.Guild;
 import com.ibartar.json.Uuid;
 import com.ibartar.json.exception.JsonParsingException;
 import com.ibartar.mapper.json.MapperHandler;
@@ -45,6 +57,20 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
    private  Map<String, Object[]> data_repository;
    private int rownum=0;
 
+   float lat_min=0f;
+   float lat_max=0f;
+   float lng_min=0f;
+   float lng_max=0f;
+   float lat_max_counter=0f;
+   
+   String latitude,longitude="";
+   
+   List<String> uuid_list=null;
+   
+  
+   Writer out,out2,out3,out4=null;
+   
+   File fileDir,fileDir2,fileDir3,fileDir4=null;
    
    
    public 	ObjectDispatcher(String urltemplate_region,String urltemplate_guild,String urltemplate_gps,Class<?> resultType,int page)
@@ -54,122 +80,235 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 	   this.urlTemplate_guild=urltemplate_guild;
 	   this.urlTemplate_Gps=urltemplate_gps;
 	   this.data_repository=new TreeMap<String, Object[]>();
-	   data_repository.put(String.valueOf(rownum++),new Object[]{"title","address","description","tel","lat","lng","cat","s_logo","l_logo"});
+	   data_repository.put(String.valueOf(rownum++),new Object[]{"title","address","description","tel","lat","lng","cat","s_logo"});
   	
    }
    
-   public void addToRepository()
+   
+   public ObjectDispatcher(String urlTemplate,float lat_min, float lat_max, float lng_min,float lng_max) throws UnsupportedEncodingException, FileNotFoundException
    {
-	  // double lat_min=35.60000000;
-	  // double lat_max=35.89999999;
-	  // double lng_min=51.10000000;
-	   //double lng_max=51.69999999;
+	   super ();
+	   this.lat_max=lat_max;
+	   this.lat_min=lat_min;
+	   this.lng_min=lng_min;
+	   this.lng_max=lng_max;
+	   this.lat_max_counter=lat_max;
+	   this.urlTemplate_Gps=urlTemplate;
+	   page=1;
+	   this.data_repository=new TreeMap<String, Object[]>();
+	   data_repository.put(String.valueOf(rownum++),new Object[]{"title","address","description","tel","lat","lng","cat","s_logo"});
+	   uuid_list=new ArrayList<>();
 	   
-	 float lat_min=35.5720f;
-     float lat_max=35.8324f;
-     
-     double lng_min=51.1047;
-	 double lng_max=51.6345;
-	 
-	 double lat_max_temp=35.8324;
-	   
-	   String lng,lat="";
-	 	   
-	   int count=0;
-	   int f=0;
-	   
-	 //  while(lng_max>=lng_min)
-	//   {
-		   
-		   while(lat_max_temp>=lat_min)
-		   {
+  	
+	    fileDir = new File("c:\\out.txt");
+		
+		out = new BufferedWriter(new OutputStreamWriter(
+			new FileOutputStream(fileDir), "UTF8"));
+
+		
+		 fileDir2 = new File("c:\\blist.txt");
 			
-			   count++;
-				
-			   lat=String.format("%.4f",lat_max_temp);
-			   lng=String.format("%.4f",lng_max);
-			   
-			   
-			   URLTEMPLATE= MessageFormat.format(this.urlTemplate_Gps,page,lat+"9999",lng+"9999",lat+"1111",lng+"1111");
-				  
-//			   String jsonResponse=callHttpService();
-// 		       try {
-//				responseBody=parseJsonResponse(jsonResponse,resultType);
-//		
-//				if (responseBody.getData().size()>0){
-//					
-//					System.out.println("found.");
-//					
-//	    			for (Object objData :responseBody.getData())
-//					   {
-//					    								    						    					
-//				 
-//						   data_repository.put(String.valueOf(rownum++),new Object[]{
-//							   
-//							   ((Uuid)objData).getTitle(),
-//							   ((Uuid)objData).getAddress(),
-//							   ((Uuid)objData).getDescription(),
-//							   ((Uuid)objData).getTel_1(),
-//							   ((Uuid)objData).getLat(),
-//							   ((Uuid)objData).getLng(),
-//						       ((Uuid)objData).getGuilds().get(0).getTitle(),
-//							   ((Uuid)objData).getLogo().getSmall(),
-//							   ((Uuid)objData).getLogo().getFullSize(),
-//							   				   			   
-//						   });
-//					   }
-//	    			
-//	    		    
-//	    			f=1;
-//					
-//				}
-// 	
-//				if (f==1)
-//				{
-//					
-//					break;
-//				}
-//				
-//						
-//				} catch (JsonParsingException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			   
-			   
-			  System.out.println(URLTEMPLATE);
-			   
-						   
- 		      lat_max_temp=lat_max_temp-0.0001;
-			   
-//			   if (count==1000)
-//			   {
-//				   break;
-//			   }
-			   
-		   }
-		   
-		//   if (count==1000)
-	//	   {
-	//		   break;
-	//	   }
-		   
-		//   if (f==1)
-		//	{
-				
-		//		break;
-		//	}
-		   
-		  // lat_max_temp=lat_max;
-		   
-		  // lng_max=lng_max-0.0001;
-		   
-	 //  }
+		out2 = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(fileDir2), "UTF8"));
+		
+	
+	    fileDir3 = new File("c:\\uuid.txt");
+		out3 = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(fileDir3), "UTF8"));
+		
+		fileDir4 = new File("c:\\req.txt");
+	    out4 = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(fileDir4), "UTF8"));
+		
 	   
-	 //  System.out.println("finish.............");
+   }
+   
+   private Boolean chechDuplicateUuid(String uuid)
+   {
+	   int count=0;
+	   
+	   for (String _uuid:uuid_list){
+		   
+		   if (_uuid==uuid || _uuid.equals(uuid))
+		   {
+			   count=1;
+			   break;
+		   }
+	   }
+	   
+	   if (count==1) return true;
+	   return false;
+	   	   
+   }
+   
+   public void addToRepository(String size_page,Writer w,Writer w2,Writer w3) throws IOException
+   {
+	  
+	  maxPage=Integer.parseInt(size_page);
+	  
+	  if ((maxPage*10) > 100)
+	  {
+		  out2.append(MessageFormat.format(this.urlTemplate_Gps,"1",latitude+"9999",longitude+"9999",latitude+"1111",longitude+"1111")).append("\r\n");
+	      out2.flush();
+	      maxPage=10;
+	  }
+	  else
+	  {
+		  maxPage= (maxPage*10) / 10;
+		  maxPage=((maxPage*10) %10!=0) ? maxPage+1: maxPage;
+	  }
+			  
+	  for (int i=1;i<=maxPage;i++)
+	  {
+		  
+		   URLTEMPLATE= MessageFormat.format(this.urlTemplate_Gps,i,latitude+"9999",longitude+"9999",latitude+"1111",longitude+"1111");
+		   if (URLTEMPLATE!="")
+		   {
+			  
+		        String jsonResponse=callHttpService();
+		        try {
+			           responseBody=parseJsonResponse(jsonResponse,resultType);
+			           if (responseBody.getData().size()>0){
+							 System.out.println(URLTEMPLATE);
+			         		   for (Object objData :responseBody.getData())
+					    	   {
+			         		         					         			   
+			         			       if(chechDuplicateUuid(((Uuid)objData).getUuid())==false)
+			         			      {
+			         			    	   
+						         			 String category="";
+						         			 if ( ((Uuid)objData).getGuilds().size() >0 )
+						         			 {
+						         			    for(Guild  guild:((Uuid)objData).getGuilds())
+						         			    {
+						         			    	category=category+"..."+guild.getTitle();
+						         			    }
+						         				 
+						         			 }
+					         			 
+									         data_repository.put(String.valueOf(rownum++),new Object[]{
+												   
+											       ((Uuid)objData).getTitle(),
+												   ((Uuid)objData).getAddress(),
+												   ((Uuid)objData).getDescription(),
+												   ((Uuid)objData).getTel_1(),
+												   ((Uuid)objData).getLat(),
+												   ((Uuid)objData).getLng(),
+												   category,
+												   ((Uuid)objData).getLogo().getSmall()
+												//   ((Uuid)objData).getLogo().getFullSize(),
+												   				   			   
+											   });
+									  
+									            String desc=((Uuid)objData).getDescription();
+									            if (desc!=null)
+									            {
+									            	desc=desc.replaceAll("[\\r\\n]", "");
+									            }
+									         
+									            String data= 
+									           		 ((Uuid)objData).getTitle()+"@"
+									        		 +((Uuid)objData).getAddress()+"@"
+									        		 +desc+"@"
+									        	     +((Uuid)objData).getTel_1()+"@"
+									        		 +((Uuid)objData).getLat()+"@"
+									        		 +((Uuid)objData).getLng()+"@"
+									        		 +category+"@"
+									        		 +((Uuid)objData).getLogo().getSmall();
+									       				
+									     
+									       uuid_list.add(((Uuid)objData).getUuid());
+									       out3.append(((Uuid)objData).getUuid()).append("\r\n");
+									       out3.flush();
+									       									       
+									       out.append(data).append("\r\n");
+									       out.flush();
+													    	   
+							    	  }
+					    	   }
+						
+			}
+	
+							
+			} catch (JsonParsingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		   
+		   }
+		   		  
+	  }
+	   
 	   
 	   
    }
+   
+   public void retrieveByGPS() throws IOException
+   {
+		   
+	   System.out.println("runnig.............");
+   
+	  
+   	   
+	   while(lng_max>=lng_min)
+	   {
+		
+				
+		   while(lat_max_counter>=lat_max)
+		  {
+			
+	
+			   latitude=String.format("%.4f",lat_max_counter);
+			   longitude =String.format("%.4f",lng_max);
+
+			   URLTEMPLATE= MessageFormat.format(this.urlTemplate_Gps,page,latitude+"9999",longitude+"9999",latitude+"1111",longitude+"1111");
+			 
+			   if (URLTEMPLATE!="")
+			   {
+				   
+			       
+			        String jsonResponse=callHttpService();
+			        try {
+				           responseBody=parseJsonResponse(jsonResponse,resultType);
+				           if (responseBody.getData().size()>0){
+				               addToRepository(responseBody.getLast_page(),out,out2,out3);
+				           }
+				      		
+				        }
+					
+					 catch (JsonParsingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			        
+			        out4.append(latitude+"9999"+","+longitude+"9999"+ "---"+latitude+"1111"+","+longitude+"1111").append("\r\n");
+				    out4.flush();
+		         }
+			   
+			  
+				  lat_max_counter=lat_max_counter-0.0001f;
+			   
+		    }
+		   			 
+		      lat_max_counter=lat_max;
+		   
+			  lng_max=lng_max-0.0001f;
+				
+		
+	   
+		   }
+ 
+		  out.close();   
+		  out2.close();
+		  out3.close();
+		  out4.close();
+		  System.out.println("finish.............");
+	  }
+	   
+
+ 
+ 
+ 
    
    public void exportToExcel (String fileName)
    {
@@ -216,6 +355,7 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 	        int cellnum = 0;
 	        for (Object obj : objArr)
 	        {
+	        
 	             Cell cell = row.createCell(cellnum++);
 	             cell.setCellValue((String)obj);
 	         
@@ -247,7 +387,7 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
    }
    
    @Override
-public void retreieveDataByRegion() throws IOException 
+    public void retreieveDataByRegion() throws IOException 
 	{
 	         // region= "&#1575;&#1576;&#1585;&#1575;&#1607;&#1740;&#1605;&#8204;&#1570;&#1576;&#1575;&#1583;";
 	          
