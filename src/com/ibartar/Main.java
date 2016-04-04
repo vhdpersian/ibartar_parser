@@ -31,7 +31,7 @@ public class Main {
 	    
 	    String URLTEMPLATE_GPS="http://ibartar.com/api/v1.1/page/search?"
 	    		+ "page={0}"
-	    		+ "&area={1},{2},{3},{4}"
+	    		+ "&area={1}"
 	    		+ "&chanel=menu&s_id=8a61a996-850d-4f13-a64e-a8aa9160b09c&device_type=desktop";
 		
 		
@@ -42,7 +42,7 @@ public class Main {
 				 // ,Body.class,1);
 	    
 	      ObjectDispatcher objDispatcher=new ObjectDispatcher(
-	    		  URLTEMPLATE_GPS,35.5720f,35.8324f,51.1047f,51.6345f);
+	    		  URLTEMPLATE_GPS,5720,8324,1047,6345);
 		  objDispatcher.Startup();
 		 
 		

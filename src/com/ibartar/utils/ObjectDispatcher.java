@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -57,11 +58,13 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
    private  Map<String, Object[]> data_repository;
    private int rownum=0;
 
-   float lat_min=0f;
-   float lat_max=0f;
-   float lng_min=0f;
-   float lng_max=0f;
-   float lat_max_counter=0f;
+   int lat_min;
+   int lat_max;
+   int lng_min;
+   int lng_max;
+   int lat_max_temp;
+   
+   String area;
    
    String latitude,longitude="";
    
@@ -85,14 +88,14 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
    }
    
    
-   public ObjectDispatcher(String urlTemplate,float lat_min, float lat_max, float lng_min,float lng_max) throws UnsupportedEncodingException, FileNotFoundException
+   public ObjectDispatcher(String urlTemplate,int lat_min, int lat_max, int lng_min,int lng_max) throws UnsupportedEncodingException, FileNotFoundException
    {
 	   super ();
 	   this.lat_max=lat_max;
 	   this.lat_min=lat_min;
 	   this.lng_min=lng_min;
 	   this.lng_max=lng_max;
-	   this.lat_max_counter=lat_max;
+	   this.lat_max_temp=lat_max;
 	   this.urlTemplate_Gps=urlTemplate;
 	   page=1;
 	   this.data_repository=new TreeMap<String, Object[]>();
@@ -100,23 +103,23 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 	   uuid_list=new ArrayList<>();
 	   
   	
-	    fileDir = new File("c:\\out.txt");
+	    fileDir = new File("d:\\out.txt");
 		
 		out = new BufferedWriter(new OutputStreamWriter(
 			new FileOutputStream(fileDir), "UTF8"));
 
 		
-		 fileDir2 = new File("c:\\blist.txt");
+		 fileDir2 = new File("d:\\blist.txt");
 			
 		out2 = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(fileDir2), "UTF8"));
 		
 	
-	    fileDir3 = new File("c:\\uuid.txt");
+	    fileDir3 = new File("d:\\uuid.txt");
 		out3 = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(fileDir3), "UTF8"));
 		
-		fileDir4 = new File("c:\\req.txt");
+		fileDir4 = new File("d:\\req.txt");
 	    out4 = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(fileDir4), "UTF8"));
 		
@@ -141,14 +144,14 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 	   	   
    }
    
-   public void addToRepository(String size_page,Writer w,Writer w2,Writer w3) throws IOException
+   public void addToRepository(String size_page,String area) throws IOException
    {
 	  
 	  maxPage=Integer.parseInt(size_page);
 	  
 	  if ((maxPage*10) > 100)
 	  {
-		  out2.append(MessageFormat.format(this.urlTemplate_Gps,"1",latitude+"9999",longitude+"9999",latitude+"1111",longitude+"1111")).append("\r\n");
+		  out2.append(MessageFormat.format(this.urlTemplate_Gps,"1",area)).append("\r\n");
 	      out2.flush();
 	      maxPage=10;
 	  }
@@ -161,7 +164,7 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 	  for (int i=1;i<=maxPage;i++)
 	  {
 		  
-		   URLTEMPLATE= MessageFormat.format(this.urlTemplate_Gps,i,latitude+"9999",longitude+"9999",latitude+"1111",longitude+"1111");
+		  URLTEMPLATE= MessageFormat.format(this.urlTemplate_Gps,i,area);
 		   if (URLTEMPLATE!="")
 		   {
 			  
@@ -173,8 +176,8 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 			         		   for (Object objData :responseBody.getData())
 					    	   {
 			         		         					         			   
-			         			       if(chechDuplicateUuid(((Uuid)objData).getUuid())==false)
-			         			      {
+			         			     //  if(chechDuplicateUuid(((Uuid)objData).getUuid())==false)
+			         			      //{
 			         			    	   
 						         			 String category="";
 						         			 if ( ((Uuid)objData).getGuilds().size() >0 )
@@ -217,14 +220,14 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 									        		 +((Uuid)objData).getLogo().getSmall();
 									       				
 									     
-									       uuid_list.add(((Uuid)objData).getUuid());
-									       out3.append(((Uuid)objData).getUuid()).append("\r\n");
-									       out3.flush();
+									       //uuid_list.add(((Uuid)objData).getUuid());
+									     //  out3.append(((Uuid)objData).getUuid()).append("\r\n");
+									       //out3.flush();
 									       									       
 									       out.append(data).append("\r\n");
 									       out.flush();
 													    	   
-							    	  }
+							    	 // }
 					    	   }
 						
 			}
@@ -252,26 +255,23 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
    	   
 	   while(lng_max>=lng_min)
 	   {
-		
-				
-		   while(lat_max_counter>=lat_max)
+					
+		   while(lat_max>=lat_min)
 		  {
 			
-	
-			   latitude=String.format("%.4f",lat_max_counter);
-			   longitude =String.format("%.4f",lng_max);
-
-			   URLTEMPLATE= MessageFormat.format(this.urlTemplate_Gps,page,latitude+"9999",longitude+"9999",latitude+"1111",longitude+"1111");
+			
+			   area=String.format("35.%d9999,",lat_max)+String.format("51.%d9999,",lng_max)
+					   +String.format("35.%d1111,",lat_max)+String.format("51.%d1111",lng_max);
+			   URLTEMPLATE= MessageFormat.format(this.urlTemplate_Gps,page,area);
 			 
 			   if (URLTEMPLATE!="")
 			   {
-				   
-			       
+				   		       
 			        String jsonResponse=callHttpService();
 			        try {
 				           responseBody=parseJsonResponse(jsonResponse,resultType);
 				           if (responseBody.getData().size()>0){
-				               addToRepository(responseBody.getLast_page(),out,out2,out3);
+				               addToRepository(responseBody.getLast_page(),area);
 				           }
 				      		
 				        }
@@ -281,19 +281,18 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
 							e.printStackTrace();
 						}
 			        
-			        out4.append(latitude+"9999"+","+longitude+"9999"+ "---"+latitude+"1111"+","+longitude+"1111").append("\r\n");
+			        out4.append(area).append("\r\n");
 				    out4.flush();
 		         }
 			   
 			  
-				  lat_max_counter=lat_max_counter-0.0001f;
+				  lat_max=lat_max-1;
 			   
 		    }
 		   			 
-		      lat_max_counter=lat_max;
+		      lat_max=lat_max_temp;
 		   
-			  lng_max=lng_max-0.0001f;
-				
+			  lng_max=lng_max-1;
 		
 	   
 		   }
@@ -590,16 +589,16 @@ public class ObjectDispatcher  extends AbstractObjectDispatcher  {
      
 	 private String  callHttpService()  {
 		    	
-		     String url= URLTEMPLATE; //MessageFormat.format(URLTEMPLATE, page,region);
+		   //  String url= URLTEMPLATE; //MessageFormat.format(URLTEMPLATE, page,region);
 	    	 String responseBody="";
 
 	    	
 	    	 
 			 HttpClient httpclient = new DefaultHttpClient();
 		        try {
-		            HttpGet httpget = new HttpGet(url);
+		            HttpGet httpget = new HttpGet(URLTEMPLATE);
 
-		           System.out.println("executing request " + httpget.getURI());
+		          // System.out.println("executing request " + httpget.getURI());
 		           
 		            // Create a response handler
 		            ResponseHandler<String> responseHandler = new BasicResponseHandler();
